@@ -1,0 +1,20 @@
+---
+
+- hosts: all
+  become: true
+  tasks:
+  - name: Update Repository Index
+    command: yum makecache
+  - name: Install httpd package
+    yum:
+      name: httpd
+      state: latest
+  - name: Start httpd server
+    systemd:
+      name: httpd
+      state: started
+      enabled: true
+  - name: Add php support for httpd
+    yum:
+      name: php
+      state: latest

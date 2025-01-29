@@ -3,14 +3,14 @@
 - hosts: all
   become: true
   tasks:
-  - name: Update Repository Index
-    yum:
-      update_cache: true
-    when: ansible_distribution == "CentOS"
-  - name: Install httpd package
-    yum:
-      name: httpd
-      state: present
+
+  - name: install apache and php for CentOS servers
+    dnf:
+      name:
+        - httpd
+        - php
+      state: latest
+      update_cache: yes
     when: ansible_distribution == "CentOS"
   - name: Start httpd server
     systemd:
@@ -18,15 +18,10 @@
       state: started
       enabled: true
     when: ansible_distribution == "CentOS"
-  - name: Allow port 80/tcp
+
+  - name: Allow http service
     ansible.posix.firewalld:
       service: http
       permanent: true
       immediate: true
       state: enabled
-      
-  - name: Add php support for httpd
-    yum:
-      name: php
-      state: present
-    when: ansible_distribution == "CentOS"

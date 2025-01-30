@@ -1,5 +1,8 @@
 [web_servers]
-192.168.181.32 ansible_user=ansible
+192.168.181.32
 
 [db_servers]
-192.168.181.61 ansible_user=ansible
+192.168.181.61
+
+[workstations]
+192.168.181.221

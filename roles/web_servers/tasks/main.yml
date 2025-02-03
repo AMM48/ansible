@@ -1,19 +1,17 @@
 - name: install apache and php for CentOS servers
   tags: centos,php,httpd
-  yum:
+  package:
     name:
-      - httpd
-      - php
+      - "{{ apache_package_name }}"
+      - "{{ php_package_name }}"
     state: latest
-  when: ansible_distribution == "CentOS"
 
 - name: Start httpd server
   tags: httpd,centos
   service:
-    name: httpd
+    name: "{{ apache_service }}"
     state: started
     enabled: true
-  when: ansible_distribution == "CentOS"
 
 - name: Allow http service
   tags: httpd,centos
@@ -22,22 +20,16 @@
     permanent: true
     immediate: true
     state: enabled
+  when: ansible_distribution == "CentOS"
 
 - name: change admin email address
   tags: httpd,centos
   lineinfile:
     path: /etc/httpd/conf/httpd.conf
     regexp: '^ServerAdmin'
-    line: ServerAdmin somebody@somewhere.com
+    line: ServerAdmin somebody@somewhere.io
   when: ansible_distribution == "CentOS"
-  register: httpd
-
-- name: Restart httpd
-  tags: httpd,centos
-  service:
-    name: httpd
-    state: restarted
-  when: httpd.changed
+  notify: restart_apache
 
 - name: copy default html file for site
   tags: centos,httpd
